@@ -8,13 +8,18 @@
 import SwiftUI
 
 struct Messages: View {
-    let messages: [String]
+    let messages: [Message]
     
     var body: some View {
-        List(messages, id: \.self) { message in
-            Message(text: message)
-                .listRowSeparator(.hidden)
-                .modifier(Flipped())
+        List {
+            ForEach(messages) { message in
+                MessageView(message: message)
+                    .listRowSeparator(.hidden)
+                    .modifier(Flipped())
+            }
+            .listRowInsets(
+                EdgeInsets(top: 6, leading: 12, bottom: 6, trailing: 12)
+            )
         }
         .listStyle(.plain)
         .modifier(Flipped())
@@ -23,11 +28,11 @@ struct Messages: View {
 
 #Preview {
     Messages(messages: [
-        "First message",
-        "Second message was very long and here we can test the multiline text view with some really long text.",
-        "Third message",
-        "Fourth message",
-        "Fifth message",
-        "Sixth message"
+        Message(text: "First message", type: .received),
+        Message(text: "Second message was very long and here we can test the multiline text view with some really long text.", type: .received),
+        Message(text: "Third message", type: .received),
+        Message(text: "Fourth message", type: .received),
+        Message(text: "Fifth message", type: .sent),
+        Message(text: "Sixth message", type: .received)
     ])
 }
