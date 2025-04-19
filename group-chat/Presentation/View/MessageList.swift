@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct Messages: View {
+struct MessageList: View {
     let messages: [Message]
     
     var body: some View {
@@ -27,7 +27,7 @@ struct Messages: View {
 }
 
 #Preview {
-    Messages(messages: [
+    MessageList(messages: [
         Message(text: "First message", type: .received),
         Message(text: "Second message was very long and here we can test the multiline text view with some really long text.", type: .received),
         Message(text: "Third message", type: .received),
