@@ -8,29 +8,31 @@
 import SwiftUI
 
 struct Chat: View {
-    @State private var messages: [Message] = [
-        Message(text: "First message", type: .received),
-        Message(text: "Second message was very long and here we can test the multiline text view with some really long text.", type: .received),
-        Message(text: "Third message", type: .received)
-    ]
-    @State private var text: String = ""
+    @State private var viewModel: ChatViewModel
+    
+    init(viewModel: ChatViewModel) {
+        self.viewModel = viewModel
+    }
     
     var body: some View {
         VStack {
-            Messages(messages: messages.reversed())
+            Messages(messages: viewModel.messages.reversed())
             HStack(spacing: 12) {
-                ChatTextField(text: $text, hint: "Message...")
+                ChatTextField(text: $viewModel.text, hint: "Message...")
                 SendButton {
-                    messages.append(Message(text: text, type: .sent))
-                    text = ""
+                    viewModel.send()
                 }
             }
-            .padding(.horizontal, 24)
+            .padding(.horizontal, 12)
             .padding(.bottom, 4)
         }
     }
 }
 
 #Preview {
-    Chat()
+    let mockService = ChatServiceMock()
+    Chat(viewModel: ChatViewModel(
+        sendMessageUseCase: SendMessageUseCaseImpl(service: mockService),
+        listenMessagesUseCase: ListenMessagesUseCaseImpl(service: mockService)
+    ))
 }
