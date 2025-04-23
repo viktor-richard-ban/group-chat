@@ -13,13 +13,16 @@ struct MessageList: View {
     var body: some View {
         List {
             ForEach(messages) { message in
-                MessageView(message: message)
-                    .listRowSeparator(.hidden)
-                    .modifier(Flipped())
+                VStack(alignment: .trailing, spacing: 4) {
+                    MessageView(message: message)
+                    SeenList()
+                }
             }
+            .listRowSeparator(.hidden)
             .listRowInsets(
                 EdgeInsets(top: 6, leading: 12, bottom: 6, trailing: 12)
             )
+            .modifier(Flipped())
         }
         .listStyle(.plain)
         .modifier(Flipped())
