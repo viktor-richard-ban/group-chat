@@ -15,7 +15,7 @@ struct MessageList: View {
             ForEach(messages) { message in
                 VStack(alignment: .trailing, spacing: 4) {
                     MessageView(message: message)
-                    SeenList()
+                    SeenList(avatars: message.seen)
                 }
             }
             .listRowSeparator(.hidden)
@@ -32,10 +32,10 @@ struct MessageList: View {
 #Preview {
     MessageList(messages: [
         Message(text: "First message", type: .received),
-        Message(text: "Second message was very long and here we can test the multiline text view with some really long text.", type: .received),
+        Message(text: "Second message was very long and here we can test the multiline text view with some really long text.", type: .received, seen: ["k"]),
         Message(text: "Third message", type: .received),
         Message(text: "Fourth message", type: .received),
-        Message(text: "Fifth message", type: .sent),
+        Message(text: "Fifth message", type: .sent, seen: ["B"]),
         Message(text: "Sixth message", type: .received)
     ])
 }

@@ -8,19 +8,11 @@
 import SwiftUI
 
 struct SeenList: View {
-    let avatars: [String] = [["Z", "K", "P"], ["A", "B"], ["A"], [], [], [], []].randomElement() ?? []
-    var filteredAvatars: [String] {
-        if avatars.count > 2 {
-            var avatars2 = avatars.dropLast(avatars.count - 2)
-            avatars2.append("+")
-            return Array(avatars2)
-        }
-        return avatars
-    }
+    var avatars: [Character] = []
     
     var body: some View {
         HStack(spacing: -5) {
-            ForEach(filteredAvatars, id: \.self) { avatar in
+            ForEach(avatars, id: \.self) { avatar in
                 Avatar(
                     character: avatar,
                     backgroundColor: [Color.red, Color.green, Color.cyan].randomElement() ?? .blue
