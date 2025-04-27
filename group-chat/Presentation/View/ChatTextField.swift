@@ -7,13 +7,27 @@
 
 import SwiftUI
 
-struct ChatTextField: View {
-    @FocusState private var isFocused: Bool
-    @Binding var text: String
+@Observable
+class ChatTextFieldState {
+    var text: String
     let hint: String
     
+    init(text: String, hint: String) {
+        self.text = text
+        self.hint = hint
+    }
+}
+
+struct ChatTextField: View {
+    @State private var state: ChatTextFieldState
+    @FocusState private var isFocused: Bool
+    
+    init(state: ChatTextFieldState) {
+        self.state = state
+    }
+    
     var body: some View {
-        TextField(hint, text: $text)
+        TextField(state.hint, text: $state.text)
             .focused($isFocused)
             .frame(height: 40)
             .padding(.horizontal, 12)
@@ -25,6 +39,8 @@ struct ChatTextField: View {
 }
 
 #Preview {
-    ChatTextField(text: .constant(""), hint: "Message...")
+    ChatTextField(
+        state: ChatTextFieldState(text: "", hint: "Message...")
+    )
         .padding(.horizontal, 10)
 }
