@@ -16,7 +16,7 @@ struct Chat: View {
     
     var body: some View {
         VStack {
-            MessageList(messages: viewModel.messages.reversed())
+            MessageList(state: viewModel.messageListState)
             HStack(spacing: 12) {
                 ChatTextField(state: viewModel.textFieldState)
                 SendButton {

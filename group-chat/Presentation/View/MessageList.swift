@@ -7,15 +7,30 @@
 
 import SwiftUI
 
+@Observable
+final class MessageListState {
+    var messages: [Message]
+    var lastSeenMessageInfo: [UUID: [Character]]
+    
+    init(messages: [Message], lastSeenMessageInfo: [UUID: [Character]]) {
+        self.messages = messages
+        self.lastSeenMessageInfo = lastSeenMessageInfo
+    }
+}
+
 struct MessageList: View {
-    let messages: [Message]
+    private let state: MessageListState
+    
+    init(state: MessageListState) {
+        self.state = state
+    }
     
     var body: some View {
         List {
-            ForEach(messages) { message in
+            ForEach(state.messages) { message in
                 VStack(alignment: .trailing, spacing: 4) {
                     MessageView(message: message)
-                    SeenList(avatars: message.seen)
+                    SeenList(avatars: state.lastSeenMessageInfo[message.id] ?? [])
                 }
             }
             .listRowSeparator(.hidden)
@@ -30,12 +45,19 @@ struct MessageList: View {
 }
 
 #Preview {
-    MessageList(messages: [
-        Message(text: "First message", type: .received),
-        Message(text: "Second message was very long and here we can test the multiline text view with some really long text.", type: .received, seen: ["k"]),
-        Message(text: "Third message", type: .received),
-        Message(text: "Fourth message", type: .received),
-        Message(text: "Fifth message", type: .sent, seen: ["B"]),
-        Message(text: "Sixth message", type: .received)
-    ])
+    MessageList(
+        state: MessageListState(
+            messages: [
+                Message(id: UUID(uuidString: "12345678-1234-1234-1234-123456789012")!, text: "Sixth message", type: .received),
+                Message(text: "Fifth message", type: .sent),
+                Message(text: "Fourth message", type: .received),
+                Message(text: "Third message", type: .received),
+                Message(text: "Second message was very long and here we can test the multiline text view with some really long text.", type: .received),
+                Message(text: "First message", type: .received),
+            ],
+            lastSeenMessageInfo: [
+                UUID(uuidString: "12345678-1234-1234-1234-123456789012")!: ["C"]
+            ]
+        )
+    )
 }
