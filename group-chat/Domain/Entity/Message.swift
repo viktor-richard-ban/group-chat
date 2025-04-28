@@ -8,7 +8,13 @@
 import Foundation
 
 struct Message: Identifiable {
-    let id: UUID = UUID()
+    let id: UUID
     let text: String
     let type: MessageType
+    
+    init(id: UUID = UUID(), text: String, type: MessageType) {
+        self.id = id
+        self.text = text
+        self.type = type
+    }
 }

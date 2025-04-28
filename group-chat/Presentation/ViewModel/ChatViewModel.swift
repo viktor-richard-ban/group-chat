@@ -9,9 +9,10 @@ import Foundation
 import SwiftUICore
 
 @Observable
-class ChatViewModel {
-    var messages: [Message] = []
-    var text: String = ""
+@MainActor
+final class ChatViewModel {
+    var messageListState: MessageListState = MessageListState(messages: [], lastSeenMessageInfo: [:])
+    var textFieldState: ChatTextFieldState = ChatTextFieldState(text: "", hint: "Message...")
     
     private let sendMessageUseCase: SendMessageUseCase
     private let listenMessagesUseCase: ListenMessagesUseCase
@@ -27,14 +28,25 @@ class ChatViewModel {
     
     func listen() async {
         for await message in listenMessagesUseCase.listen() {
-            messages.append(Message(text: message, type: .received))
+            insert(new: Message(text: message, type: .received))
         }
     }
     
     func send() {
-        guard !text.isEmpty else { return }
-        messages.append(Message(text: text, type: .sent))
-        sendMessageUseCase.execute(message: text)
-        text = ""
+        guard !textFieldState.text.isEmpty else { return }
+        insert(new: Message(text: textFieldState.text, type: .sent))
+        sendMessageUseCase.execute(message: textFieldState.text)
+        textFieldState.text = ""
+    }
+    
+    private func insert(new message: Message) {
+        // TODO: - [#12] Remove reversed in order not to reverse the whole list every time we get a new message
+        messageListState.messages.insert(message, at: 0)
+        lastSeenMessage(by: "C", messageId: message.id)
+    }
+    
+    private func lastSeenMessage(by user: Character, messageId: UUID) {
+        messageListState.lastSeenMessageInfo.removeAll()
+        messageListState.lastSeenMessageInfo[messageId] = [user]
     }
 }

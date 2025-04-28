@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct Avatar: View {
-    let character: String
+    let character: Character
     let backgroundColor: Color
     
     var body: some View {
@@ -20,7 +20,7 @@ struct Avatar: View {
                 Circle()
                     .fill(backgroundColor)
                
-                Text(character)
+                Text(character.uppercased())
                     .font(.system(size: fontSize, weight: .semibold))
                     .foregroundColor(.white)
             }
