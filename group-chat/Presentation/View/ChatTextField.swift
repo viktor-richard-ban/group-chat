@@ -8,7 +8,7 @@
 import SwiftUI
 
 @Observable
-class ChatTextFieldState {
+final class ChatTextFieldState {
     var text: String
     let hint: String
     
@@ -19,7 +19,7 @@ class ChatTextFieldState {
 }
 
 struct ChatTextField: View {
-    @State private var state: ChatTextFieldState
+    @Bindable private var state: ChatTextFieldState
     @FocusState private var isFocused: Bool
     
     init(state: ChatTextFieldState) {

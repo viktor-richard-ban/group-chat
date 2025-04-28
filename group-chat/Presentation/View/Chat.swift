@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct Chat: View {
-    @State private var viewModel: ChatViewModel
+    private var viewModel: ChatViewModel
     
     init(viewModel: ChatViewModel) {
         self.viewModel = viewModel
