@@ -5,6 +5,8 @@
 //  Created by Viktor Bán on 2025. 04. 19..
 //
 
+import Foundation
+
 struct SendMessageUseCaseImpl: SendMessageUseCase {
     private let service: ChatService
     
@@ -13,6 +15,8 @@ struct SendMessageUseCaseImpl: SendMessageUseCase {
     }
     
     func execute(message: String) {
-        service.send(message: message)
+        let textMessageApiModel = TextMessageApiModel(type: .text, userId: UUID(), text: message)
+        let messageApiModel = MessageApiModel.text(textMessageApiModel)
+        try? service.send(message: messageApiModel)
     }
 }

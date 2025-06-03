@@ -6,5 +6,5 @@
 //
 
 protocol ListenMessagesUseCase {
-    func listen() -> AsyncStream<String>
+    func listen() -> AsyncStream<Message>
 }
