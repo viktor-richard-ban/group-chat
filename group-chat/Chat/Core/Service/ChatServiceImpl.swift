@@ -10,35 +10,39 @@ import OSLog
 
 final class ChatServiceImpl: ChatService {
     private var webSocketTask: URLSessionWebSocketTask?
-    private let stream: AsyncStream<Message>
-    private let continuation: AsyncStream<Message>.Continuation
+    private let stream: AsyncStream<MessageApiModel>
+    private let continuation: AsyncStream<MessageApiModel>.Continuation
     
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "", category: "ChatService")
     
     init() {
-        let stream = AsyncStream<Message>.makeStream()
+        let stream = AsyncStream<MessageApiModel>.makeStream()
         self.stream = stream.stream
         self.continuation = stream.continuation
         connect()
         startPinging()
     }
     
-    func send(message: MessageApiModel) throws {
+    func send(message: MessageApiModel) async throws -> Bool {
         let encoder = JSONEncoder()
         let data = try encoder.encode(message)
         let result = String(decoding: data, as: UTF8.self)
         
         let messageToSend = URLSessionWebSocketTask.Message.string(result)
-        webSocketTask?.send(messageToSend) { [logger] error in
-            if let error = error {
-                logger.debug("Failed to send message: \(error)")
-            } else {
-                logger.debug("Message sent: \(result)")
+        return await withCheckedContinuation { continuation in
+            webSocketTask?.send(messageToSend) { [logger] error in
+                if let error = error {
+                    logger.debug("Failed to send message: \(error)")
+                    return continuation.resume(returning: false)
+                } else {
+                    logger.debug("Message sent: \(result)")
+                    return continuation.resume(returning: true)
+                }
             }
         }
     }
     
-    func listen() -> AsyncStream<Message> {
+    func listen() -> AsyncStream<MessageApiModel> {
         return stream
     }
     
@@ -100,18 +104,6 @@ final class ChatServiceImpl: ChatService {
             assertionFailure("Failed to convert string to Data")
             return nil
         }
-        do {
-            let decoder = JSONDecoder()
-            let apiModel = try decoder.decode(MessageApiModel.self, from: data)
-            switch apiModel {
-            case .text(let textMessageApiModel):
-                let message = Message(text: textMessageApiModel.text, type: .received)
-                return message
-            }
-        } catch {
-            logger.error("Failed to decode Message: \(error.localizedDescription)")
-        }
-        
-        return nil
+        return apiModel
     }
 }

@@ -17,4 +17,9 @@ struct Message: Identifiable {
         self.text = text
         self.type = type
     }
+    
+    enum MessageType {
+        case sent
+        case received
+    }
 }

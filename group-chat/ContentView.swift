@@ -9,10 +9,13 @@ import SwiftUI
 
 struct ContentView: View {
     private let chatService = ChatServiceImpl()
+    private let store: ChatStore = ChatStore()
+    
     private var viewModel: ChatViewModel {
         ChatViewModel(
-            sendMessageUseCase: SendMessageUseCaseImpl(service: chatService),
-            listenMessagesUseCase: ListenMessagesUseCaseImpl(service: chatService)
+            sendMessageUseCase: SendMessageUseCaseImpl(service: chatService, store: store),
+            listenMessagesUseCase: ListenMessagesUseCaseImpl(service: chatService, store: store),
+            chatState: store.state
         )
     }
     
