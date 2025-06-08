@@ -28,7 +28,7 @@ final class ChatViewModel {
     
     func listen() async {
         for await message in listenMessagesUseCase.listen() {
-            insert(new: Message(text: message, type: .received))
+            insert(new: message)
         }
     }
     

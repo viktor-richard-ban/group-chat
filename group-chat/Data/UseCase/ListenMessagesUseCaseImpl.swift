@@ -12,7 +12,7 @@ struct ListenMessagesUseCaseImpl: ListenMessagesUseCase {
         self.service = service
     }
     
-    func listen() -> AsyncStream<String> {
+    func listen() -> AsyncStream<Message> {
         service.listen()
     }
 }
