@@ -6,5 +6,5 @@
 //
 
 protocol SendMessageUseCase {
-    func execute(message: String)
+    func send(message: String)
 }
