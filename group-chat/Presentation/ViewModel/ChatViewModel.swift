@@ -11,6 +11,7 @@ import SwiftUICore
 @Observable
 @MainActor
 final class ChatViewModel {
+    var isConnecting: Bool = false
     var messageListState: MessageListState = MessageListState(messages: [], lastSeenMessageInfo: [:])
     var textFieldState: ChatTextFieldState = ChatTextFieldState(text: "", hint: "Message...")
     
@@ -28,6 +29,10 @@ final class ChatViewModel {
     
     func listen() async {
         for await message in listenMessagesUseCase.listen() {
+            if message.type == .connectivity {
+                handleConnectivityMessage(message: message)
+                continue
+            }
             insert(new: message)
         }
     }
@@ -48,5 +53,16 @@ final class ChatViewModel {
     private func lastSeenMessage(by user: Character, messageId: UUID) {
         messageListState.lastSeenMessageInfo.removeAll()
         messageListState.lastSeenMessageInfo[messageId] = [user]
+    }
+    
+    private func handleConnectivityMessage(message: Message) {
+        guard message.type == .connectivity,
+        let status = ConnectionStatus(rawValue: message.text) else { return }
+        
+        if status == .connected && isConnecting {
+            isConnecting = false
+        } else if status == .disconnected && !isConnecting  {
+            isConnecting = true
+        }
     }
 }

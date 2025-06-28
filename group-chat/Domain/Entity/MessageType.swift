@@ -8,4 +8,5 @@
 enum MessageType {
     case sent
     case received
+    case connectivity
 }
