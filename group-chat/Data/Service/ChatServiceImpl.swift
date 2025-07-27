@@ -43,10 +43,7 @@ final class ChatServiceImpl: ChatService {
     }
     
     private func connect() {
-        guard let url = URL(string: Constants.webSocketURLString) else {
-            assertionFailure("Url string must be a valid url")
-            return
-        }
+        let url = URLProvider.url(for: .webSocket)
         webSocketTask = URLSession(configuration: .default)
             .webSocketTask(with: url)
         webSocketTask?.resume()
@@ -116,12 +113,5 @@ final class ChatServiceImpl: ChatService {
         }
         
         return nil
-    }
-}
-
-private extension ChatServiceImpl {
-    enum Constants {
-        static let webSocketEchoURLString = "wss://echo.websocket.events"
-        static let webSocketURLString = "ws://localhost/ws"
     }
 }
