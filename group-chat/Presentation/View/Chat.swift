@@ -17,6 +17,14 @@ struct Chat: View {
     var body: some View {
         VStack {
             MessageList(state: viewModel.messageListState)
+                .overlay(alignment: .top) {
+                    if viewModel.isConnecting {
+                        Loader(text: "Connecting...")
+                            .transition(.move(edge: .top))
+                    }
+                }
+                .animation(.easeInOut(duration: 0.4), value: viewModel.isConnecting)
+            
             HStack(spacing: 12) {
                 ChatTextField(state: viewModel.textFieldState)
                 SendButton {

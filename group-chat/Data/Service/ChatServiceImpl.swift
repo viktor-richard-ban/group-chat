@@ -20,7 +20,7 @@ final class ChatServiceImpl: ChatService {
         self.stream = stream.stream
         self.continuation = stream.continuation
         connect()
-        receive()
+        startPinging()
     }
     
     func send(message: MessageApiModel) throws {
@@ -43,14 +43,33 @@ final class ChatServiceImpl: ChatService {
     }
     
     private func connect() {
-        guard let url = URL(string: Constants.webSocketEchoURLString) else {
+        guard let url = URL(string: Constants.webSocketURLString) else {
             assertionFailure("Url string must be a valid url")
             return
         }
         webSocketTask = URLSession(configuration: .default)
             .webSocketTask(with: url)
         webSocketTask?.resume()
-        logger.debug("Connection created to the server")
+        receive()
+    }
+    
+    private func startPinging() {
+        webSocketTask?.sendPing { [weak self] error in
+            guard let self else { return }
+            
+            if let error = error {
+                self.logger.log("Ping failed: \(error)")
+                self.sendConnectionState(state: .disconnected)
+                self.connect()
+            } else {
+                self.logger.log("Ping succeeded")
+                self.sendConnectionState(state: .connected)
+            }
+            
+            DispatchQueue.global().asyncAfter(deadline: .now() + 2) { [weak self] in
+                self?.startPinging()
+            }
+        }
     }
     
     private func receive() {
@@ -72,6 +91,11 @@ final class ChatServiceImpl: ChatService {
                 self.logger.debug("Receiving message failed: \(error.localizedDescription)")
             }
         })
+    }
+    
+    private func sendConnectionState(state: ConnectionStatus) {
+        let message = Message(text: state.rawValue, type: .connectivity)
+        continuation.yield(message)
     }
     
     private func decodedMessage(_ messageString: String) -> Message? {
