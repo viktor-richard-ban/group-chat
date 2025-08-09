@@ -5,10 +5,11 @@
 //  Created by Viktor Bán on 2025. 06. 08..
 //
 
-struct ChatState {
-    var messages: [Message] = []
-    
-    init(messages: [Message]) {
-        self.messages = messages
-    }
+struct ChatState: Equatable {
+    var messages: [Message]
+    var connection: ConnectionStatus
+}
+
+extension ChatState {
+    static let `default`: Self = ChatState(messages: [], connection: .disconnected)
 }

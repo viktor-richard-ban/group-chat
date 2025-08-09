@@ -8,11 +8,16 @@
 import Foundation
 import OSLog
 
+protocol ChatServiceDelegate {
+    func didConnectionStatusChange(_ status: ConnectionStatus)
+}
+
 final class ChatServiceImpl: ChatService {
+    var delegate: ChatServiceDelegate?
+    
     private var webSocketTask: URLSessionWebSocketTask?
     private let stream: AsyncStream<MessageApiModel>
     private let continuation: AsyncStream<MessageApiModel>.Continuation
-    
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "", category: "ChatService")
     
     init() {
@@ -60,11 +65,11 @@ final class ChatServiceImpl: ChatService {
             
             if let error = error {
                 self.logger.log("Ping failed: \(error)")
-                self.sendConnectionState(state: .disconnected)
+                self.sendConnectionState(status: .disconnected)
                 self.connect()
             } else {
                 self.logger.log("Ping succeeded")
-                self.sendConnectionState(state: .connected)
+                self.sendConnectionState(status: .connected)
             }
             
             DispatchQueue.global().asyncAfter(deadline: .now() + 2) { [weak self] in
@@ -94,16 +99,22 @@ final class ChatServiceImpl: ChatService {
         })
     }
     
-    private func sendConnectionState(state: ConnectionStatus) {
-        let message = Message(text: state.rawValue, type: .connectivity)
-        continuation.yield(message)
+    private func sendConnectionState(status: ConnectionStatus) {
+        delegate?.didConnectionStatusChange(status)
     }
     
-    private func decodedMessage(_ messageString: String) -> Message? {
+    private func decodedMessage(_ messageString: String) -> MessageApiModel? {
         guard let data = messageString.data(using: .utf8) else {
             assertionFailure("Failed to convert string to Data")
             return nil
         }
-        return apiModel
+        do {
+            let decoder = JSONDecoder()
+            let apiModel = try decoder.decode(MessageApiModel.self, from: data)
+            return apiModel
+        } catch {
+            logger.error("Failed to decode Message: \(error.localizedDescription)")
+        }
+        return nil
     }
 }

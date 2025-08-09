@@ -6,42 +6,39 @@
 //
 
 import Foundation
-import SwiftUICore
+import SwiftUI
 import Combine
 
 @Observable
 @MainActor
 final class ChatViewModel {
+    var isConnecting: Bool = false
     var messageListState: MessageListState = MessageListState(messages: [], lastSeenMessageInfo: [:])
     var textFieldState: ChatTextFieldState = ChatTextFieldState(text: "", hint: "Message...")
+
+    private let store: ChatStore
+    private var bag: Set<AnyCancellable> = Set()
     
-    private let sendMessageUseCase: SendMessageUseCase
-    private let listenMessagesUseCase: ListenMessagesUseCase
-    private let chatState: Published<ChatState>.Publisher
-    private var cancellables: Set<AnyCancellable> = []
-    
-    init(sendMessageUseCase: SendMessageUseCase,
-         listenMessagesUseCase: ListenMessagesUseCase,
-         chatState: Published<ChatState>.Publisher) {
-        self.sendMessageUseCase = sendMessageUseCase
-        self.listenMessagesUseCase = listenMessagesUseCase
-        self.chatState = chatState
-        
-        listen()
+    init(store: ChatStore) {
+        self.store = store
+        bind()
     }
     
-    func listen() {
-        listenMessagesUseCase.listen()
-        chatState.map(\.messages)
-            .sink { [messageListState] messages in
-                messageListState.messages = messages.reversed()
+    func bind() {
+        store.state.removeDuplicates()
+            .sink { [weak self] (state: ChatState) in
+                guard let self else { return }
+                self.messageListState.messages = state.messages.reversed()
+                self.isConnecting = state.connection == .disconnected
             }
-            .store(in: &cancellables)
+            .store(in: &bag)
+
     }
     
     func send() {
         guard !textFieldState.text.isEmpty else { return }
-        sendMessageUseCase.send(message: textFieldState.text)
+        let message = Message(text: textFieldState.text, type: .sent)
+        store.dispatch(.send(message))
         textFieldState.text = ""
     }
 }

@@ -8,6 +8,8 @@
 import Foundation
 
 struct ChatServiceMock: ChatService {
+    var delegate: ChatServiceDelegate?
+    
     private let stream: AsyncStream<MessageApiModel>
     private let continuation: AsyncStream<MessageApiModel>.Continuation
     
