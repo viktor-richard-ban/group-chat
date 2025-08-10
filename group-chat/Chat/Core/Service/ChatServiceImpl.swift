@@ -28,21 +28,17 @@ final class ChatServiceImpl: ChatService {
         startPinging()
     }
     
-    func send(message: MessageApiModel) async throws -> Bool {
+    func send(message: MessageApiModel) throws {
         let encoder = JSONEncoder()
         let data = try encoder.encode(message)
         let result = String(decoding: data, as: UTF8.self)
         
         let messageToSend = URLSessionWebSocketTask.Message.string(result)
-        return await withCheckedContinuation { continuation in
-            webSocketTask?.send(messageToSend) { [logger] error in
-                if let error = error {
-                    logger.debug("Failed to send message: \(error)")
-                    return continuation.resume(returning: false)
-                } else {
-                    logger.debug("Message sent: \(result)")
-                    return continuation.resume(returning: true)
-                }
+        webSocketTask?.send(messageToSend) { [logger] error in
+            if let error = error {
+                logger.debug("Failed to send message: \(error)")
+            } else {
+                logger.debug("Message sent: \(result)")
             }
         }
     }

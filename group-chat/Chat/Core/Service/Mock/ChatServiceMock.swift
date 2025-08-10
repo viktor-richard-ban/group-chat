@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ChatServiceMock: ChatService {
+final class ChatServiceMock: ChatService {
     var delegate: ChatServiceDelegate?
     
     private let stream: AsyncStream<MessageApiModel>
@@ -19,9 +19,10 @@ struct ChatServiceMock: ChatService {
         self.continuation = stream.continuation
     }
     
-    func send(message: MessageApiModel) async throws -> Bool {
+    var sentMessages: [MessageApiModel] = []
+    func send(message: MessageApiModel) {
+        sentMessages.append(message)
         continuation.yield(message)
-        return true
     }
     
     

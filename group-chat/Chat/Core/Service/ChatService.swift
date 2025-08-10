@@ -13,9 +13,8 @@ protocol ChatService {
     /// Sends a message and returns whether it was successful.
     ///
     /// - Parameter message: The message to send.
-    /// - Returns: `true` if the message was sent successfully; `false` otherwise.
     /// - Throws: If sending fails due to network, encoding, or other errors.
-    func send(message: MessageApiModel) async throws -> Bool
+    func send(message: MessageApiModel) throws
     
     /// Returns a stream of incoming messages.
     ///

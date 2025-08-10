@@ -28,9 +28,8 @@ final class WebSocketMiddleware: Middleware {
         guard let action = action as? ChatAction else { return }
         if case .send(let message) = action {
             let apiModel = createApiModel(message: message)
-            Task {
-                try await chatService.send(message: apiModel)
-            }
+            // TODO: - Add proper error handling
+            try? chatService.send(message: apiModel)
         }
     }
     
