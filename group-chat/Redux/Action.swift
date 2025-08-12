@@ -9,4 +9,4 @@
 ///
 /// Actions describe events or intents in the application, and are handled by
 /// reducers and middlewares to update state or trigger side effects.
-protocol Action {}
+protocol Action: Equatable {}
