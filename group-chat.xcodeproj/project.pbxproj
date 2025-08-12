@@ -6,8 +6,19 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		3AF14E712E47CB36000A22BE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3A88297B2DAEB2E200EC8A66 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3A8829822DAEB2E200EC8A66;
+			remoteInfo = "group-chat";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		3A8829832DAEB2E200EC8A66 /* Group Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Group Chat.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AF14E6D2E47CB36000A22BE /* group-chat-tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "group-chat-tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -16,10 +27,22 @@
 			path = "group-chat";
 			sourceTree = "<group>";
 		};
+		3AF14E6E2E47CB36000A22BE /* group-chat-tests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "group-chat-tests";
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		3A8829802DAEB2E200EC8A66 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AF14E6A2E47CB36000A22BE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -33,6 +56,7 @@
 			isa = PBXGroup;
 			children = (
 				3A8829852DAEB2E200EC8A66 /* group-chat */,
+				3AF14E6E2E47CB36000A22BE /* group-chat-tests */,
 				3A8829842DAEB2E200EC8A66 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +65,7 @@
 			isa = PBXGroup;
 			children = (
 				3A8829832DAEB2E200EC8A66 /* Group Chat.app */,
+				3AF14E6D2E47CB36000A22BE /* group-chat-tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -70,6 +95,29 @@
 			productReference = 3A8829832DAEB2E200EC8A66 /* Group Chat.app */;
 			productType = "com.apple.product-type.application";
 		};
+		3AF14E6C2E47CB36000A22BE /* group-chat-tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3AF14E732E47CB36000A22BE /* Build configuration list for PBXNativeTarget "group-chat-tests" */;
+			buildPhases = (
+				3AF14E692E47CB36000A22BE /* Sources */,
+				3AF14E6A2E47CB36000A22BE /* Frameworks */,
+				3AF14E6B2E47CB36000A22BE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3AF14E722E47CB36000A22BE /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				3AF14E6E2E47CB36000A22BE /* group-chat-tests */,
+			);
+			name = "group-chat-tests";
+			packageProductDependencies = (
+			);
+			productName = "group-chat-tests";
+			productReference = 3AF14E6D2E47CB36000A22BE /* group-chat-tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -77,11 +125,16 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1620;
+				LastSwiftUpdateCheck = 2600;
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
 					3A8829822DAEB2E200EC8A66 = {
 						CreatedOnToolsVersion = 16.2;
+					};
+					3AF14E6C2E47CB36000A22BE = {
+						CreatedOnToolsVersion = 26.0;
+						LastSwiftMigration = 2600;
+						TestTargetID = 3A8829822DAEB2E200EC8A66;
 					};
 				};
 			};
@@ -100,12 +153,20 @@
 			projectRoot = "";
 			targets = (
 				3A8829822DAEB2E200EC8A66 /* group-chat */,
+				3AF14E6C2E47CB36000A22BE /* group-chat-tests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		3A8829812DAEB2E200EC8A66 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AF14E6B2E47CB36000A22BE /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -122,7 +183,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3AF14E692E47CB36000A22BE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		3AF14E722E47CB36000A22BE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3A8829822DAEB2E200EC8A66 /* group-chat */;
+			targetProxy = 3AF14E712E47CB36000A22BE /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		3A88298F2DAEB2E300EC8A66 /* Debug */ = {
@@ -304,6 +380,51 @@
 			};
 			name = Release;
 		};
+		3AF14E742E47CB36000A22BE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6SP8DWFZH2;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.viktorban.group-chat-tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Group Chat.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Group Chat";
+			};
+			name = Debug;
+		};
+		3AF14E752E47CB36000A22BE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6SP8DWFZH2;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.viktorban.group-chat-tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Group Chat.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Group Chat";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -321,6 +442,15 @@
 			buildConfigurations = (
 				3A8829922DAEB2E300EC8A66 /* Debug */,
 				3A8829932DAEB2E300EC8A66 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3AF14E732E47CB36000A22BE /* Build configuration list for PBXNativeTarget "group-chat-tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AF14E742E47CB36000A22BE /* Debug */,
+				3AF14E752E47CB36000A22BE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

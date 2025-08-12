@@ -5,20 +5,25 @@
 //  Created by Viktor Bán on 2025. 06. 08..
 //
 
+import Combine
 import Foundation
 import OSLog
 
+protocol ChatServiceDelegate {
+    func didConnectionStatusChange(_ status: ConnectionStatus)
+}
+
 final class ChatServiceImpl: ChatService {
-    private var webSocketTask: URLSessionWebSocketTask?
-    private let stream: AsyncStream<Message>
-    private let continuation: AsyncStream<Message>.Continuation
+    var delegate: ChatServiceDelegate?
+    var messageStream: AnyPublisher<MessageApiModel, Never> {
+        messageSubject.eraseToAnyPublisher()
+    }
     
-    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "", category: "ChatService")
+    private let messageSubject = PassthroughSubject<MessageApiModel, Never>()
+    private var webSocketTask: URLSessionWebSocketTask?
+    private let logger = Logger(subsystem: "ChatCore", category: "ChatService")
     
     init() {
-        let stream = AsyncStream<Message>.makeStream()
-        self.stream = stream.stream
-        self.continuation = stream.continuation
         connect()
         startPinging()
     }
@@ -38,10 +43,6 @@ final class ChatServiceImpl: ChatService {
         }
     }
     
-    func listen() -> AsyncStream<Message> {
-        return stream
-    }
-    
     private func connect() {
         let url = URLProvider.url(for: .webSocket)
         webSocketTask = URLSession(configuration: .default)
@@ -56,11 +57,11 @@ final class ChatServiceImpl: ChatService {
             
             if let error = error {
                 self.logger.log("Ping failed: \(error)")
-                self.sendConnectionState(state: .disconnected)
+                self.sendConnectionState(status: .disconnected)
                 self.connect()
             } else {
                 self.logger.log("Ping succeeded")
-                self.sendConnectionState(state: .connected)
+                self.sendConnectionState(status: .connected)
             }
             
             DispatchQueue.global().asyncAfter(deadline: .now() + 2) { [weak self] in
@@ -75,14 +76,14 @@ final class ChatServiceImpl: ChatService {
             switch result {
             case .success(let message):
                 if case .string(let messageString) = message {
-                    self.logger.debug("Message received - String: \(messageString)")
+                    self.logger.debug("Message received - Type: string: \(messageString)")
                     let decodedMessage = self.decodedMessage(messageString)
                     if let decodedMessage {
-                        self.continuation.yield(decodedMessage)
+                        self.messageSubject.send(decodedMessage)
                     }
                     self.receive()  // Continue receiving the next message
                 } else {
-                    self.logger.debug("Message received - Other")
+                    self.logger.debug("Message received - Type: other")
                 }
             case .failure(let error):
                 self.logger.debug("Receiving message failed: \(error.localizedDescription)")
@@ -90,12 +91,11 @@ final class ChatServiceImpl: ChatService {
         })
     }
     
-    private func sendConnectionState(state: ConnectionStatus) {
-        let message = Message(text: state.rawValue, type: .connectivity)
-        continuation.yield(message)
+    private func sendConnectionState(status: ConnectionStatus) {
+        delegate?.didConnectionStatusChange(status)
     }
     
-    private func decodedMessage(_ messageString: String) -> Message? {
+    private func decodedMessage(_ messageString: String) -> MessageApiModel? {
         guard let data = messageString.data(using: .utf8) else {
             assertionFailure("Failed to convert string to Data")
             return nil
@@ -103,15 +103,10 @@ final class ChatServiceImpl: ChatService {
         do {
             let decoder = JSONDecoder()
             let apiModel = try decoder.decode(MessageApiModel.self, from: data)
-            switch apiModel {
-            case .text(let textMessageApiModel):
-                let message = Message(text: textMessageApiModel.text, type: .received)
-                return message
-            }
+            return apiModel
         } catch {
             logger.error("Failed to decode Message: \(error.localizedDescription)")
         }
-        
         return nil
     }
 }

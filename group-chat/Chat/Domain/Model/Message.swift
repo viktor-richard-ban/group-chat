@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Message: Identifiable {
+struct Message: Identifiable, Equatable {
     let id: UUID
     let text: String
     let type: MessageType
@@ -16,5 +16,10 @@ struct Message: Identifiable {
         self.id = id
         self.text = text
         self.type = type
+    }
+    
+    enum MessageType {
+        case sent
+        case received
     }
 }

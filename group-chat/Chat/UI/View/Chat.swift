@@ -39,8 +39,6 @@ struct Chat: View {
 
 #Preview {
     let mockService = ChatServiceMock()
-    Chat(viewModel: ChatViewModel(
-        sendMessageUseCase: SendMessageUseCaseImpl(service: mockService),
-        listenMessagesUseCase: ListenMessagesUseCaseImpl(service: mockService)
-    ))
+    let store = ChatStore(middlewares: [])
+    Chat(viewModel: ChatViewModel(store: store))
 }

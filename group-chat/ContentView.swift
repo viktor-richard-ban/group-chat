@@ -8,13 +8,14 @@
 import SwiftUI
 
 struct ContentView: View {
-    private let chatService = ChatServiceImpl()
-    private var viewModel: ChatViewModel {
-        ChatViewModel(
-            sendMessageUseCase: SendMessageUseCaseImpl(service: chatService),
-            listenMessagesUseCase: ListenMessagesUseCaseImpl(service: chatService)
-        )
+    private var store: ChatStore {
+        ChatStore(middlewares: [webSocketMiddleware])
     }
+    
+    private var viewModel: ChatViewModel {
+        ChatViewModel(store: store)
+    }
+    private var webSocketMiddleware = WebSocketMiddleware( chatService: ChatServiceImpl())
     
     var body: some View {
         Chat(viewModel: viewModel)
