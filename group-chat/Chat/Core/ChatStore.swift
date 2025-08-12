@@ -16,7 +16,7 @@ final class ChatStore: Store {
     var state: Published<ChatState>.Publisher { $statePublisher }
     @Published private var statePublisher: ChatState = ChatState.default
     
-    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "", category: "ChatStore")
+    private let logger = Logger(subsystem: "ChatCore", category: "ChatStore")
     
     init(middlewares: [any Middleware]) {
         self.middlewares = middlewares

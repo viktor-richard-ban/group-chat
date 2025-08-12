@@ -11,5 +11,5 @@ struct ChatState: Equatable {
 }
 
 extension ChatState {
-    static let `default`: Self = ChatState(messages: [], connection: .disconnected)
+    static let `default`: Self = ChatState(messages: [], connection: .connected)
 }

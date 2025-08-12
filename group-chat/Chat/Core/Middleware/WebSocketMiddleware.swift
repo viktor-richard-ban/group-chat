@@ -6,22 +6,22 @@
 //
 
 import Foundation
+import Combine
 
 final class WebSocketMiddleware: Middleware {
     private var store: ChatStore?
     private var chatService: ChatService
+    private var messageStreamCancellable: AnyCancellable?
     
     init(chatService: ChatService) {
         self.chatService = chatService
         self.chatService.delegate = self
-        Task {
-            await listen()
-        }
     }
     
     func attach(store: any Store) {
         guard let store = store as? ChatStore else { return }
         self.store = store
+        listen()
     }
     
     func handle(action: Action) {
@@ -33,11 +33,13 @@ final class WebSocketMiddleware: Middleware {
         }
     }
     
-    private func listen() async {
-        for await apiModel in chatService.listen() {
-            let message = Message(apiModel: apiModel)
-            store?.dispatch(.receive(message))
-        }
+    private func listen() {
+        messageStreamCancellable?.cancel()
+        messageStreamCancellable = chatService.messageStream
+            .sink { [store] (apiModel: MessageApiModel) in
+                let message = Message(apiModel: apiModel)
+                store?.dispatch(.receive(message))
+            }
     }
     
     private func createApiModel(message: Message) -> MessageApiModel {

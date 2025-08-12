@@ -6,27 +6,21 @@
 //
 
 import Foundation
+import Combine
 
 final class ChatServiceMock: ChatService {
     var delegate: ChatServiceDelegate?
-    
-    private let stream: AsyncStream<MessageApiModel>
-    private let continuation: AsyncStream<MessageApiModel>.Continuation
-    
-    init() {
-        let stream = AsyncStream<MessageApiModel>.makeStream()
-        self.stream = stream.stream
-        self.continuation = stream.continuation
+    var messageStream: AnyPublisher<MessageApiModel, Never> {
+        messageSubject.eraseToAnyPublisher()
     }
+    private let messageSubject = PassthroughSubject<MessageApiModel, Never>()
     
     var sentMessages: [MessageApiModel] = []
     func send(message: MessageApiModel) {
         sentMessages.append(message)
-        continuation.yield(message)
     }
     
-    
-    func listen() -> AsyncStream<MessageApiModel> {
-        stream
+    func receiveMessage(_ message: MessageApiModel) {
+        messageSubject.send(message)
     }
 }

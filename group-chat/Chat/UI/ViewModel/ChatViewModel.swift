@@ -25,14 +25,14 @@ final class ChatViewModel {
     }
     
     func bind() {
-        store.state.removeDuplicates()
+        store.state
+            .removeDuplicates()
             .sink { [weak self] (state: ChatState) in
                 guard let self else { return }
                 self.messageListState.messages = state.messages.reversed()
                 self.isConnecting = state.connection == .disconnected
             }
             .store(in: &bag)
-
     }
     
     func send() {

@@ -5,6 +5,7 @@
 //  Created by Viktor Bán on 2025. 06. 08..
 //
 
+import Combine
 import Foundation
 import OSLog
 
@@ -14,16 +15,15 @@ protocol ChatServiceDelegate {
 
 final class ChatServiceImpl: ChatService {
     var delegate: ChatServiceDelegate?
+    var messageStream: AnyPublisher<MessageApiModel, Never> {
+        messageSubject.eraseToAnyPublisher()
+    }
     
+    private let messageSubject = PassthroughSubject<MessageApiModel, Never>()
     private var webSocketTask: URLSessionWebSocketTask?
-    private let stream: AsyncStream<MessageApiModel>
-    private let continuation: AsyncStream<MessageApiModel>.Continuation
-    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "", category: "ChatService")
+    private let logger = Logger(subsystem: "ChatCore", category: "ChatService")
     
     init() {
-        let stream = AsyncStream<MessageApiModel>.makeStream()
-        self.stream = stream.stream
-        self.continuation = stream.continuation
         connect()
         startPinging()
     }
@@ -41,10 +41,6 @@ final class ChatServiceImpl: ChatService {
                 logger.debug("Message sent: \(result)")
             }
         }
-    }
-    
-    func listen() -> AsyncStream<MessageApiModel> {
-        return stream
     }
     
     private func connect() {
@@ -80,14 +76,14 @@ final class ChatServiceImpl: ChatService {
             switch result {
             case .success(let message):
                 if case .string(let messageString) = message {
-                    self.logger.debug("Message received - String: \(messageString)")
+                    self.logger.debug("Message received - Type: string: \(messageString)")
                     let decodedMessage = self.decodedMessage(messageString)
                     if let decodedMessage {
-                        self.continuation.yield(decodedMessage)
+                        self.messageSubject.send(decodedMessage)
                     }
                     self.receive()  // Continue receiving the next message
                 } else {
-                    self.logger.debug("Message received - Other")
+                    self.logger.debug("Message received - Type: other")
                 }
             case .failure(let error):
                 self.logger.debug("Receiving message failed: \(error.localizedDescription)")
